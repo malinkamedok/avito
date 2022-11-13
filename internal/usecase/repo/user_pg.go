@@ -54,9 +54,9 @@ func (u *UserRepo) CreateNewBalance(ctx context.Context, user uuid.UUID, sum uin
 }
 
 func (u *UserRepo) AppendBalance(ctx context.Context, user uuid.UUID, sum uint64) error {
-	query := `UPDATE balance set balance = $1 + (select balance from balance where user_uuid = $2) where user_uuid = $2`
+	query := `SELECT update_balance($1, $2)`
 
-	rows, err := u.Pool.Query(ctx, query, sum, user)
+	rows, err := u.Pool.Query(ctx, query, user, sum)
 	if err != nil {
 		log.Println("Cannot execute query to append")
 		return fmt.Errorf("error in executing query %w", err)

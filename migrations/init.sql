@@ -19,3 +19,8 @@ create table if not exists report (
     order_uuid uuid not null,
     total_cost bigint not null
 );
+
+create or replace function update_balance(userUUID uuid, sum int) returns void as $$
+UPDATE balance set balance = sum + (select balance from balance where user_uuid = userUUID)
+where user_uuid = userUUID;
+$$ language sql;
