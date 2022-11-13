@@ -16,11 +16,18 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 
 	handler.POST("/append", us.append)
 	handler.GET("/get-balance/:id", us.getBalance)
+	handler.POST("/reserve-money", us.reserveMoney)
 }
 
 type appendRequest struct {
 	User uuid.UUID `json:"user"`
 	Sum  uint64    `json:"sum"`
+}
+
+type reserveRequest struct {
+	BalanceUUID uuid.UUID `json:"balanceUUID"`
+	ReserveUUID uuid.UUID `json:"reserveUUID"`
+	Amount      uint64    `json:"amount"`
 }
 
 func (u *userRoutes) append(c *gin.Context) {
@@ -49,4 +56,18 @@ func (u *userRoutes) getBalance(c *gin.Context) {
 		return
 	}
 	c.JSONP(http.StatusOK, balance)
+}
+
+func (u *userRoutes) reserveMoney(c *gin.Context) {
+	var request reserveRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
+		return
+	}
+	err := u.t.ReserveMoney(c.Request.Context(), request.BalanceUUID, request.ReserveUUID, request.Amount)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in reserving user money")
+		return
+	}
+	c.JSONP(http.StatusOK, nil)
 }
