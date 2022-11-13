@@ -4,7 +4,7 @@ import "github.com/caarlos0/env/v6"
 
 type Config struct {
 	AppPort     string `env:"APP_PORT" envDefault:"9000"`
-	PostgresUrl string `env:"POSTGRES_URL" envDefault:"postgresql://postgres:example@localhost:5432/postgres"`
+	PostgresUrl string `env:"POSTGRES_URL" envDefault:"postgresql://postgres:example@psql:5432/postgres"`
 }
 
 func NewConfig() (*Config, error) {
