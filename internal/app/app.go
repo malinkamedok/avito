@@ -17,13 +17,13 @@ import (
 func Run(cfg *config.Config) {
 	pg, err := postgres.New(cfg)
 	if err != nil {
-		log.Fatal("Cannot connnect to Postgre")
+		log.Fatal("Cannot connnect to Postgres")
 	}
 
 	us := usecase.NewUserUseCase(repo.NewUserRepo(pg))
 
 	handler := gin.New()
-	
+
 	v1.NewRouter(handler,
 		us)
 
