@@ -4,12 +4,10 @@ import (
 	"avito/config"
 	"context"
 	"fmt"
-
-	"log"
-	"time"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"log"
+	"time"
 )
 
 const (
