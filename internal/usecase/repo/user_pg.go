@@ -62,13 +62,30 @@ func (u *UserRepo) AppendBalance(ctx context.Context, user uuid.UUID, sum uint64
 		return fmt.Errorf("error in executing query %w", err)
 	}
 	defer rows.Close()
-	log.Println("Successfully query in AppendBalance")
+	log.Println("Successfully executed AppendBalance query")
 	return nil
 }
 
 func (u *UserRepo) GetBalance(ctx context.Context, uuid uuid.UUID) (int64, error) {
-	//TODO implement me
-	panic("implement me")
+	query := `SELECT balance FROM balance WHERE user_uuid = $1`
+
+	rows, err := u.Pool.Query(ctx, query, uuid)
+	if err != nil {
+		log.Println("Cannot execute query to get user balance")
+		return -1, err
+	}
+	defer rows.Close()
+	log.Println("Successfully executed GetBalance query")
+
+	var balance int64
+	for rows.Next() {
+		err = rows.Scan(&balance)
+		if err != nil {
+			log.Println("cannot scan balance")
+			return -1, fmt.Errorf("cannot scan value")
+		}
+	}
+	return balance, nil
 }
 
 func (u *UserRepo) ReserveMoney(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
