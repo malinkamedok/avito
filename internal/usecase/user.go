@@ -27,7 +27,6 @@ func (u *UserUseCase) AppendBalance(ctx context.Context, user uuid.UUID, sum uin
 	exists, err := u.repo.CheckUserExistence(ctx, user)
 	if err != nil {
 		return err
-
 	}
 	if !exists {
 		return u.repo.CreateNewBalance(ctx, user, sum)
@@ -36,8 +35,18 @@ func (u *UserUseCase) AppendBalance(ctx context.Context, user uuid.UUID, sum uin
 }
 
 func (u *UserUseCase) GetBalance(ctx context.Context, uuid uuid.UUID) (int64, error) {
-	//TODO implement me
-	panic("implement me")
+	exists, err := u.repo.CheckUserExistence(ctx, uuid)
+	if err != nil {
+		return -1, err
+	}
+	if !exists {
+		var sum uint64
+		err = u.repo.CreateNewBalance(ctx, uuid, sum)
+		if err != nil {
+			return -1, err
+		}
+	}
+	return u.repo.GetBalance(ctx, uuid)
 }
 
 func (u *UserUseCase) ReserveMoney(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
