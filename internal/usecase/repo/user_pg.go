@@ -21,7 +21,7 @@ func NewUserRepo(pg *postgres.Postgres) *UserRepo {
 
 // add here zerolog
 
-func (u *UserRepo) CheckUserExistence(ctx context.Context, user uuid.UUID) (bool, error) {
+func (u *UserRepo) CheckUserBalanceExistence(ctx context.Context, user uuid.UUID) (bool, error) {
 	query := `select exists(select * from balance where user_uuid = $1)`
 
 	rows, err := u.Pool.Query(ctx, query, user)
@@ -42,11 +42,64 @@ func (u *UserRepo) CheckUserExistence(ctx context.Context, user uuid.UUID) (bool
 	return exists, nil
 }
 
+func (u *UserRepo) CheckUserReserveExistence(ctx context.Context, user uuid.UUID) (bool, error) {
+	query := `SELECT EXISTS(SELECT * FROM reserve WHERE user_uuid = $1)`
+
+	rows, err := u.Pool.Query(ctx, query, user)
+	if err != nil {
+		log.Println("Cannot execute query")
+		return false, fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+
+	var exists bool
+	for rows.Next() {
+		err = rows.Scan(&exists)
+		if err != nil {
+			log.Println("cannot scan exists flag")
+			return false, fmt.Errorf("cannot scan value")
+		}
+	}
+	return exists, nil
+}
+
+func (u *UserRepo) CheckEnoughMoneyBalance(ctx context.Context, user uuid.UUID, amount uint64) (bool, error) {
+	query := `SELECT check_money($1, $2)`
+	rows, err := u.Pool.Query(ctx, query, user, amount)
+	if err != nil {
+		log.Println("Cannot execute query to check balance")
+		return false, fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed CheckEnoughMoneyBalance query")
+
+	var result bool
+	for rows.Next() {
+		err = rows.Scan(&result)
+		if err != nil {
+			log.Println("cannot scan result")
+			return false, fmt.Errorf("cannot scan value")
+		}
+	}
+	return result, nil
+}
+
 func (u *UserRepo) CreateNewBalance(ctx context.Context, user uuid.UUID, sum uint64) error {
 	query := `INSERT INTO balance(user_uuid, balance) VALUES($1, $2)`
 	rows, err := u.Pool.Query(ctx, query, user, sum)
 	if err != nil {
-		log.Println("Cannot execute query to create")
+		log.Println("Cannot execute query to create balance")
+		return fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	return nil
+}
+
+func (u *UserRepo) CreateNewReserve(ctx context.Context, balanceUUID uuid.UUID, amount uint64) error {
+	query := `INSERT INTO reserve(user_uuid, reserve) VALUES($1, $2)`
+	rows, err := u.Pool.Query(ctx, query, balanceUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to create reserve")
 		return fmt.Errorf("error in executing query %w", err)
 	}
 	defer rows.Close()
@@ -66,10 +119,10 @@ func (u *UserRepo) AppendBalance(ctx context.Context, user uuid.UUID, sum uint64
 	return nil
 }
 
-func (u *UserRepo) GetBalance(ctx context.Context, uuid uuid.UUID) (int64, error) {
+func (u *UserRepo) GetBalance(ctx context.Context, user uuid.UUID) (int64, error) {
 	query := `SELECT balance FROM balance WHERE user_uuid = $1`
 
-	rows, err := u.Pool.Query(ctx, query, uuid)
+	rows, err := u.Pool.Query(ctx, query, user)
 	if err != nil {
 		log.Println("Cannot execute query to get user balance")
 		return -1, err
@@ -88,9 +141,17 @@ func (u *UserRepo) GetBalance(ctx context.Context, uuid uuid.UUID) (int64, error
 	return balance, nil
 }
 
-func (u *UserRepo) ReserveMoney(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
-	//TODO implement me
-	panic("implement me")
+func (u *UserRepo) ReserveMoney(ctx context.Context, balanceUUID uuid.UUID, reserveUUID uuid.UUID, amount uint64) error {
+	query := `SELECT reserve_money($1, $2, $3)`
+
+	rows, err := u.Pool.Query(ctx, query, balanceUUID, reserveUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to reserve money")
+		return fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed ReserveMoney query")
+	return nil
 }
 
 func (u *UserRepo) AcceptIncome(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
