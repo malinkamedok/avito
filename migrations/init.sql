@@ -10,6 +10,8 @@ create table if not exists balance (
 create table if not exists reserve (
     id serial primary key,
     user_uuid uuid not null,
+    service_uuid uuid not null,
+    order_uuid uuid not null,
     reserve bigint not null check ( reserve >= 0 )
 );
 
@@ -26,11 +28,15 @@ UPDATE balance set balance = sum + (select balance from balance where user_uuid 
 where user_uuid = userUUID;
 $$ language sql;
 
-create or replace function reserve_money(balanceUUID uuid, reserveUUID uuid, amount bigint) returns void as $$
-update balance set balance = (select balance from balance where user_uuid = balanceUUID) - amount
-where user_uuid = balanceUUID;
-update reserve set reserve = amount + (select reserve from reserve where user_uuid = reserveUUID)
-where user_uuid = reserveUUID;
+create or replace function reserve_money(userUUID uuid, serviceUUID uuid, orderUUID uuid, amount bigint) returns void as $$
+update balance set balance = (select balance from balance where user_uuid = userUUID) - amount
+where user_uuid = userUUID;
+    /*
+update reserve set reserve = amount + (select reserve from reserve where user_uuid = userUUID)
+where user_uuid = userUUID;
+
+     */
+insert into reserve(user_uuid, service_uuid, order_uuid, reserve) values (userUUID, serviceUUID, orderUUID, amount);
 $$ language sql;
 
 create or replace function check_money(IN balanceUUID uuid, IN amount bigint, OUT res bool) as

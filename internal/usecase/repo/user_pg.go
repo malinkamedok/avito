@@ -95,9 +95,9 @@ func (u *UserRepo) CreateNewBalance(ctx context.Context, user uuid.UUID, sum uin
 	return nil
 }
 
-func (u *UserRepo) CreateNewReserve(ctx context.Context, balanceUUID uuid.UUID, amount uint64) error {
-	query := `INSERT INTO reserve(user_uuid, reserve) VALUES($1, $2)`
-	rows, err := u.Pool.Query(ctx, query, balanceUUID, amount)
+func (u *UserRepo) CreateNewReserve(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	query := `INSERT INTO reserve(user_uuid, service_uuid, order_uuid, reserve) VALUES($1, $2, $3, $4)`
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
 	if err != nil {
 		log.Println("Cannot execute query to create reserve")
 		return fmt.Errorf("error in executing query %w", err)
@@ -141,31 +141,33 @@ func (u *UserRepo) GetBalance(ctx context.Context, user uuid.UUID) (int64, error
 	return balance, nil
 }
 
-func (u *UserRepo) GetReserve(ctx context.Context, user uuid.UUID) (int64, error) {
+func (u *UserRepo) GetReserve(ctx context.Context, user uuid.UUID) ([]int64, error) {
 	query := `SELECT reserve FROM reserve WHERE user_uuid = $1`
 	rows, err := u.Pool.Query(ctx, query, user)
 	if err != nil {
 		log.Println("Cannot execute query to get user reserve")
-		return -1, err
+		return nil, err
 	}
 	defer rows.Close()
 	log.Println("Successfully executed GetReserve query")
 
-	var reserve int64
+	var reserve []int64
 	for rows.Next() {
-		err = rows.Scan(&reserve)
+		var rs int64
+		err = rows.Scan(&rs)
 		if err != nil {
 			log.Println("cannot scan reserve")
-			return -1, fmt.Errorf("cannot scan value")
+			return nil, fmt.Errorf("cannot scan value")
 		}
+		reserve = append(reserve, rs)
 	}
 	return reserve, nil
 }
 
-func (u *UserRepo) ReserveMoney(ctx context.Context, balanceUUID uuid.UUID, reserveUUID uuid.UUID, amount uint64) error {
-	query := `SELECT reserve_money($1, $2, $3)`
+func (u *UserRepo) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	query := `SELECT reserve_money($1, $2, $3, $4)`
 
-	rows, err := u.Pool.Query(ctx, query, balanceUUID, reserveUUID, amount)
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
 	if err != nil {
 		log.Println("Cannot execute query to reserve money")
 		return fmt.Errorf("error in executing query %w", err)

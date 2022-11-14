@@ -26,8 +26,9 @@ type appendRequest struct {
 }
 
 type reserveRequest struct {
-	BalanceUUID uuid.UUID `json:"balanceUUID"`
-	ReserveUUID uuid.UUID `json:"reserveUUID"`
+	UserUUID    uuid.UUID `json:"userUUID"`
+	ServiceUUID uuid.UUID `json:"serviceUUID"`
+	OrderUUID   uuid.UUID `json:"orderUUID"`
 	Amount      uint64    `json:"amount"`
 }
 
@@ -59,6 +60,10 @@ func (u *userRoutes) getBalance(c *gin.Context) {
 	c.JSONP(http.StatusOK, balance)
 }
 
+type reserveResponse struct {
+	Reserves []int64 `json:"reserveList"`
+}
+
 func (u *userRoutes) getReserve(c *gin.Context) {
 	userUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -70,7 +75,7 @@ func (u *userRoutes) getReserve(c *gin.Context) {
 		errorResponse(c, http.StatusInternalServerError, "error in getting user balance")
 		return
 	}
-	c.JSONP(http.StatusOK, reserve)
+	c.JSONP(http.StatusOK, reserveResponse{reserve})
 }
 
 func (u *userRoutes) reserveMoney(c *gin.Context) {
@@ -79,7 +84,7 @@ func (u *userRoutes) reserveMoney(c *gin.Context) {
 		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
 		return
 	}
-	err := u.t.ReserveMoney(c.Request.Context(), request.BalanceUUID, request.ReserveUUID, request.Amount)
+	err := u.t.ReserveMoney(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in reserving user money")
 		return

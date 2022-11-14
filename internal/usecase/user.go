@@ -49,33 +49,33 @@ func (u *UserUseCase) GetBalance(ctx context.Context, user uuid.UUID) (int64, er
 	return u.repo.GetBalance(ctx, user)
 }
 
-func (u *UserUseCase) GetReserve(ctx context.Context, user uuid.UUID) (int64, error) {
+func (u *UserUseCase) GetReserve(ctx context.Context, user uuid.UUID) ([]int64, error) {
 	exists, err := u.repo.CheckUserReserveExistence(ctx, user)
 	if err != nil {
-		return -1, err
+		return nil, err
 	}
 	if !exists {
-		fmt.Errorf("user does not have any reserved maney %w", err)
+		return nil, fmt.Errorf("user does not have any reserved maney %w", err)
 	}
 	return u.repo.GetReserve(ctx, user)
 }
 
-func (u *UserUseCase) ReserveMoney(ctx context.Context, balanceUUID uuid.UUID, reserveUUID uuid.UUID, amount uint64) error {
-	exists, err := u.repo.CheckUserReserveExistence(ctx, reserveUUID)
+func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	exists, err := u.repo.CheckUserReserveExistence(ctx, userUUID)
 	if err != nil {
 		return err
 	}
 	if !exists {
-		return u.repo.CreateNewReserve(ctx, balanceUUID, amount)
+		return u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, amount)
 	}
-	enough, err := u.repo.CheckEnoughMoneyBalance(ctx, balanceUUID, amount)
+	enough, err := u.repo.CheckEnoughMoneyBalance(ctx, userUUID, amount)
 	if err != nil {
 		return err
 	}
 	if !enough {
 		return fmt.Errorf("not enough money %w", err)
 	}
-	return u.repo.ReserveMoney(ctx, balanceUUID, reserveUUID, amount)
+	return u.repo.ReserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
 func (u *UserUseCase) AcceptIncome(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
