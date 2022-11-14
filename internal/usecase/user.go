@@ -88,3 +88,25 @@ func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serv
 	}
 	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
+
+func (u *UserUseCase) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID uuid.UUID, secondUserUUID uuid.UUID, amount uint64) error {
+	firstUserExists, err := u.repo.CheckUserBalanceExistence(ctx, firstUserUUID)
+	if err != nil {
+		return err
+	}
+	if !firstUserExists {
+		return fmt.Errorf("sender user does not have balance %w", err)
+	}
+	secondUserExists, err := u.repo.CheckUserBalanceExistence(ctx, secondUserUUID)
+	if err != nil {
+		return err
+	}
+	if !secondUserExists {
+		fmt.Println("Receiver user balance created. Try to transfer money again")
+		return u.repo.CreateNewBalance(ctx, secondUserUUID, 0)
+	}
+	if amount == 0 {
+		return fmt.Errorf("transfer amount must not be zero %w", err)
+	}
+	return u.repo.UserToUserMoneyTransfer(ctx, firstUserUUID, secondUserUUID, amount)
+}

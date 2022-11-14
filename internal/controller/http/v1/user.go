@@ -19,6 +19,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.POST("/reserve-money", us.reserveMoney)
 	handler.GET("/get-reserve/:id", us.getReserve)
 	handler.POST("/accept-income", us.acceptIncome)
+	handler.POST("/transfer-money", us.transferMoney)
 }
 
 type appendRequest struct {
@@ -38,6 +39,12 @@ type acceptRequest struct {
 	ServiceUUID uuid.UUID `json:"serviceUUID"`
 	OrderUUID   uuid.UUID `json:"orderUUID"`
 	Amount      uint64    `json:"amount"`
+}
+
+type transferRequest struct {
+	FirstUserUUID  uuid.UUID `json:"firstUserUUID"`
+	SecondUserUUID uuid.UUID `json:"secondUserUUID"`
+	Amount         uint64    `json:"amount"`
 }
 
 func (u *userRoutes) append(c *gin.Context) {
@@ -109,6 +116,20 @@ func (u *userRoutes) acceptIncome(c *gin.Context) {
 	err := u.t.AcceptIncome(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in accepting income")
+		return
+	}
+	c.JSONP(http.StatusOK, nil)
+}
+
+func (u *userRoutes) transferMoney(c *gin.Context) {
+	var request transferRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
+		return
+	}
+	err := u.t.UserToUserMoneyTransfer(c.Request.Context(), request.FirstUserUUID, request.SecondUserUUID, request.Amount)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in transfering money")
 		return
 	}
 	c.JSONP(http.StatusOK, nil)

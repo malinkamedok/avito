@@ -208,3 +208,16 @@ func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, service
 	log.Println("Successfully executed AcceptIncome query")
 	return nil
 }
+
+func (u *UserRepo) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID uuid.UUID, secondUserUUID uuid.UUID, amount uint64) error {
+	query := `SELECT user_to_user_money_transfer($1, $2, $3)`
+
+	rows, err := u.Pool.Query(ctx, query, firstUserUUID, secondUserUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to transfer money")
+		return fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed UserToUserMoneyTransfer")
+	return nil
+}

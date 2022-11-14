@@ -18,6 +18,7 @@ type (
 		GetReserve(context.Context, uuid.UUID) ([]int64, error)
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 	}
 
 	UserContract interface {
@@ -26,5 +27,6 @@ type (
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		GetReserve(context.Context, uuid.UUID) ([]int64, error)
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 	}
 )
