@@ -23,6 +23,7 @@ type (
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
 		CheckTransactions(context.Context, uuid.UUID) (bool, error)
+		GetTransactionListBySum(context.Context, uuid.UUID) ([]entity.Transaction, error)
 	}
 
 	UserContract interface {
@@ -34,5 +35,6 @@ type (
 		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
+		GetTransactionListBySum(context.Context, uuid.UUID) ([]entity.Transaction, error)
 	}
 )

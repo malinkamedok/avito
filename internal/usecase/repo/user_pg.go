@@ -266,7 +266,31 @@ func (u *UserRepo) GetTransactionListByDate(ctx context.Context, userUUID uuid.U
 		return nil, fmt.Errorf("cannot scan value %w", err)
 	}
 	defer rows.Close()
-	log.Println("Successfully executed GetTransactionList query")
+	log.Println("Successfully executed GetTransactionListByDate query")
+
+	var transactions []entity.Transaction
+	for rows.Next() {
+		var transaction entity.Transaction
+		err = rows.Scan(&transaction.ServiceName, &transaction.MoneyAmount, &transaction.OperationDate)
+		if err != nil {
+			log.Println("cannot scan transactions")
+			return nil, fmt.Errorf("cannot scan value %w", err)
+		}
+		transactions = append(transactions, transaction)
+	}
+	return transactions, nil
+}
+
+func (u *UserRepo) GetTransactionListBySum(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+	query := `select service_name, money_amount, operation_date from report where user_uuid = $1 order by money_amount`
+
+	rows, err := u.Pool.Query(ctx, query, userUUID)
+	if err != nil {
+		log.Println("Cannot execute query to get transaction list")
+		return nil, fmt.Errorf("cannot scan value %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed GetTransactionListBySum query")
 
 	var transactions []entity.Transaction
 	for rows.Next() {
