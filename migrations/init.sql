@@ -47,3 +47,10 @@ $$ language sql;
 create or replace function check_required_reserve(IN userUUID uuid, IN serviceUUID uuid, IN orderUUID uuid, IN amount bigint, OUT res bool) as
 'select EXISTS(SELECT * FROM reserve WHERE user_uuid = userUUID and service_uuid = serviceUUID and order_uuid = orderUUID and reserve = amount)'
 language sql;
+
+create or replace function user_to_user_money_transfer(first_userUUID uuid, second_userUUID uuid, amount bigint) returns void as $$
+update balance set balance = (select balance from balance where user_uuid = first_userUUID) - amount
+where user_uuid = first_userUUID;
+update balance set balance = amount + (select balance from balance where user_uuid = second_userUUID)
+where user_uuid = second_userUUID;
+$$ language sql;
