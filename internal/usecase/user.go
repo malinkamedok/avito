@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"avito/internal/entity"
 	"context"
 	"fmt"
 	"github.com/google/uuid"
@@ -79,7 +80,7 @@ func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serv
 	return u.repo.ReserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
-func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, serviceName string, orderUUID uuid.UUID, amount uint64) error {
 	exists, err := u.repo.CheckRequiredReserveExistence(ctx, userUUID, serviceUUID, orderUUID, amount)
 	if err != nil {
 		return err
@@ -87,7 +88,7 @@ func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serv
 	if !exists {
 		return fmt.Errorf("required reserve does not exist %w", err)
 	}
-	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, orderUUID, amount)
+	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, serviceName, orderUUID, amount)
 }
 
 func (u *UserUseCase) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID uuid.UUID, secondUserUUID uuid.UUID, amount uint64) error {
@@ -129,4 +130,15 @@ func (u *UserUseCase) UnreserveMoney(ctx context.Context, userUUID uuid.UUID, se
 		return u.repo.CreateNewBalance(ctx, userUUID, 0)
 	}
 	return u.repo.UnreserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
+}
+
+func (u *UserUseCase) GetTransactionListByDate(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+	exists, err := u.repo.CheckTransactions(ctx, userUUID)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, fmt.Errorf("user does not have any transactions %w", err)
+	}
+	return u.repo.GetTransactionListByDate(ctx, userUUID)
 }

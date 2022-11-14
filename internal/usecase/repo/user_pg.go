@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"avito/internal/entity"
 	"avito/internal/usecase"
 	"avito/pkg/postgres"
 	"context"
@@ -104,7 +105,7 @@ func (u *UserRepo) CheckEnoughMoneyBalance(ctx context.Context, user uuid.UUID, 
 }
 
 func (u *UserRepo) CreateNewBalance(ctx context.Context, user uuid.UUID, sum uint64) error {
-	query := `INSERT INTO balance(user_uuid, balance) VALUES($1, $2)`
+	query := `SELECT create_new_balance($1, $2)`
 	rows, err := u.Pool.Query(ctx, query, user, sum)
 	if err != nil {
 		log.Println("Cannot execute query to create balance")
@@ -197,10 +198,10 @@ func (u *UserRepo) ReserveMoney(ctx context.Context, userUUID uuid.UUID, service
 	return nil
 }
 
-func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
-	query := `SELECT accept_income($1, $2, $3, $4)`
+func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, serviceName string, orderUUID uuid.UUID, amount uint64) error {
+	query := `SELECT accept_income($1, $2, $3, $4, $5)`
 
-	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, serviceName, orderUUID, amount)
 	if err != nil {
 		log.Println("Cannot execute query to accept income")
 		return fmt.Errorf("error in executing query %w", err)
@@ -234,4 +235,48 @@ func (u *UserRepo) UnreserveMoney(ctx context.Context, userUUID uuid.UUID, servi
 	defer rows.Close()
 	log.Println("Successfully executed UnreserveMoney query")
 	return nil
+}
+
+func (u *UserRepo) CheckTransactions(ctx context.Context, userUUID uuid.UUID) (bool, error) {
+	query := `select exists (select * from report where user_uuid = $1)`
+	rows, err := u.Pool.Query(ctx, query, userUUID)
+	if err != nil {
+		log.Println("Cannot execute query to check transactions")
+		return false, fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+
+	var result bool
+	for rows.Next() {
+		err = rows.Scan(&result)
+		if err != nil {
+			log.Println("cannot scan result")
+			return false, fmt.Errorf("cannot scan value")
+		}
+	}
+	return result, nil
+}
+
+func (u *UserRepo) GetTransactionListByDate(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+	query := `select service_name, money_amount, operation_date from report where user_uuid = $1 order by operation_date`
+
+	rows, err := u.Pool.Query(ctx, query, userUUID)
+	if err != nil {
+		log.Println("Cannot execute query to get transaction list")
+		return nil, fmt.Errorf("cannot scan value %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed GetTransactionList query")
+
+	var transactions []entity.Transaction
+	for rows.Next() {
+		var transaction entity.Transaction
+		err = rows.Scan(&transaction.ServiceName, &transaction.MoneyAmount, &transaction.OperationDate)
+		if err != nil {
+			log.Println("cannot scan transactions")
+			return nil, fmt.Errorf("cannot scan value %w", err)
+		}
+		transactions = append(transactions, transaction)
+	}
+	return transactions, nil
 }

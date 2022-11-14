@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"avito/internal/entity"
 	"avito/internal/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,6 +22,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.POST("/accept-income", us.acceptIncome)
 	handler.POST("/transfer-money", us.transferMoney)
 	handler.POST("/unreserve-money", us.unreserveMoney)
+	handler.GET("/get-transactions-by-date/:id", us.getTransactionListByDate)
 }
 
 type appendRequest struct {
@@ -38,6 +40,7 @@ type reserveRequest struct {
 type acceptRequest struct {
 	UserUUID    uuid.UUID `json:"userUUID"`
 	ServiceUUID uuid.UUID `json:"serviceUUID"`
+	ServiceName string    `json:"serviceName"`
 	OrderUUID   uuid.UUID `json:"orderUUID"`
 	Amount      uint64    `json:"amount"`
 }
@@ -121,7 +124,7 @@ func (u *userRoutes) acceptIncome(c *gin.Context) {
 		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
 		return
 	}
-	err := u.t.AcceptIncome(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
+	err := u.t.AcceptIncome(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.ServiceName, request.OrderUUID, request.Amount)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in accepting income")
 		return
@@ -155,4 +158,22 @@ func (u *userRoutes) unreserveMoney(c *gin.Context) {
 		return
 	}
 	c.JSONP(http.StatusOK, nil)
+}
+
+type transactionListResponse struct {
+	List []entity.Transaction `json:"transactions"`
+}
+
+func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
+	userUUID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing user uuid")
+		return
+	}
+	transactions, err := u.t.GetTransactionListByDate(c.Request.Context(), userUUID)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list")
+		return
+	}
+	c.JSONP(http.StatusOK, transactionListResponse{List: transactions})
 }

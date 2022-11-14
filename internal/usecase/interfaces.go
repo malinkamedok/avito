@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"avito/internal/entity"
 	"context"
 	"github.com/google/uuid"
 )
@@ -17,9 +18,11 @@ type (
 		GetBalance(context.Context, uuid.UUID) (int64, error)
 		GetReserve(context.Context, uuid.UUID) ([]int64, error)
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
-		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, string, uuid.UUID, uint64) error
 		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
+		CheckTransactions(context.Context, uuid.UUID) (bool, error)
 	}
 
 	UserContract interface {
@@ -27,8 +30,9 @@ type (
 		GetBalance(context.Context, uuid.UUID) (int64, error)
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		GetReserve(context.Context, uuid.UUID) ([]int64, error)
-		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, string, uuid.UUID, uint64) error
 		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
+		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
 	}
 )
