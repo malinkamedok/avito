@@ -37,13 +37,13 @@ func (u *UserUseCase) AppendBalance(ctx context.Context, user uuid.UUID, sum uin
 func (u *UserUseCase) GetBalance(ctx context.Context, user uuid.UUID) (int64, error) {
 	exists, err := u.repo.CheckUserBalanceExistence(ctx, user)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 	if !exists {
 		var sum uint64
 		err = u.repo.CreateNewBalance(ctx, user, sum)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 	}
 	return u.repo.GetBalance(ctx, user)
@@ -78,7 +78,13 @@ func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serv
 	return u.repo.ReserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
-func (u *UserUseCase) AcceptIncome(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
-	//TODO implement me
-	panic("implement me")
+func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	exists, err := u.repo.CheckRequiredReserveExistence(ctx, userUUID, serviceUUID, orderUUID, amount)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("required reserve does not exist %w", err)
+	}
+	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, orderUUID, amount)
 }

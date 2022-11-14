@@ -18,6 +18,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.GET("/get-balance/:id", us.getBalance)
 	handler.POST("/reserve-money", us.reserveMoney)
 	handler.GET("/get-reserve/:id", us.getReserve)
+	handler.POST("/accept-income", us.acceptIncome)
 }
 
 type appendRequest struct {
@@ -26,6 +27,13 @@ type appendRequest struct {
 }
 
 type reserveRequest struct {
+	UserUUID    uuid.UUID `json:"userUUID"`
+	ServiceUUID uuid.UUID `json:"serviceUUID"`
+	OrderUUID   uuid.UUID `json:"orderUUID"`
+	Amount      uint64    `json:"amount"`
+}
+
+type acceptRequest struct {
 	UserUUID    uuid.UUID `json:"userUUID"`
 	ServiceUUID uuid.UUID `json:"serviceUUID"`
 	OrderUUID   uuid.UUID `json:"orderUUID"`
@@ -87,6 +95,20 @@ func (u *userRoutes) reserveMoney(c *gin.Context) {
 	err := u.t.ReserveMoney(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in reserving user money")
+		return
+	}
+	c.JSONP(http.StatusOK, nil)
+}
+
+func (u *userRoutes) acceptIncome(c *gin.Context) {
+	var request acceptRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
+		return
+	}
+	err := u.t.AcceptIncome(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in accepting income")
 		return
 	}
 	c.JSONP(http.StatusOK, nil)

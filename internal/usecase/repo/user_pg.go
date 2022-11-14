@@ -63,6 +63,26 @@ func (u *UserRepo) CheckUserReserveExistence(ctx context.Context, user uuid.UUID
 	return exists, nil
 }
 
+func (u *UserRepo) CheckRequiredReserveExistence(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) (bool, error) {
+	query := `SELECT check_required_reserve($1, $2, $3, $4)`
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to check required reserve existence")
+		return false, fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+
+	var result bool
+	for rows.Next() {
+		err = rows.Scan(&result)
+		if err != nil {
+			log.Println("cannot scan result")
+			return false, fmt.Errorf("cannot scan value")
+		}
+	}
+	return result, nil
+}
+
 func (u *UserRepo) CheckEnoughMoneyBalance(ctx context.Context, user uuid.UUID, amount uint64) (bool, error) {
 	query := `SELECT check_money($1, $2)`
 	rows, err := u.Pool.Query(ctx, query, user, amount)
@@ -71,7 +91,6 @@ func (u *UserRepo) CheckEnoughMoneyBalance(ctx context.Context, user uuid.UUID, 
 		return false, fmt.Errorf("error in executing query %w", err)
 	}
 	defer rows.Close()
-	log.Println("Successfully executed CheckEnoughMoneyBalance query")
 
 	var result bool
 	for rows.Next() {
@@ -125,7 +144,7 @@ func (u *UserRepo) GetBalance(ctx context.Context, user uuid.UUID) (int64, error
 	rows, err := u.Pool.Query(ctx, query, user)
 	if err != nil {
 		log.Println("Cannot execute query to get user balance")
-		return -1, err
+		return 0, err
 	}
 	defer rows.Close()
 	log.Println("Successfully executed GetBalance query")
@@ -135,7 +154,7 @@ func (u *UserRepo) GetBalance(ctx context.Context, user uuid.UUID) (int64, error
 		err = rows.Scan(&balance)
 		if err != nil {
 			log.Println("cannot scan balance")
-			return -1, fmt.Errorf("cannot scan value")
+			return 0, fmt.Errorf("cannot scan value")
 		}
 	}
 	return balance, nil
@@ -177,7 +196,15 @@ func (u *UserRepo) ReserveMoney(ctx context.Context, userUUID uuid.UUID, service
 	return nil
 }
 
-func (u *UserRepo) AcceptIncome(ctx context.Context, uuid uuid.UUID, uuid2 uuid.UUID, i int64) error {
-	//TODO implement me
-	panic("implement me")
+func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	query := `SELECT accept_income($1, $2, $3, $4)`
+
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to accept income")
+		return fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed AcceptIncome query")
+	return nil
 }
