@@ -14,6 +14,7 @@ type (
 		CreateNewReserve(context.Context, uuid.UUID, uint64) error
 		AppendBalance(context.Context, uuid.UUID, uint64) error
 		GetBalance(context.Context, uuid.UUID) (int64, error)
+		GetReserve(context.Context, uuid.UUID) (int64, error)
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, int64) error
 	}
@@ -22,6 +23,7 @@ type (
 		AppendBalance(context.Context, uuid.UUID, uint64) error
 		GetBalance(context.Context, uuid.UUID) (int64, error)
 		ReserveMoney(context.Context, uuid.UUID, uuid.UUID, uint64) error
+		GetReserve(context.Context, uuid.UUID) (int64, error)
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, int64) error
 	}
 )
