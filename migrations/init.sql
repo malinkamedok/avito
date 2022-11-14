@@ -54,3 +54,10 @@ where user_uuid = first_userUUID;
 update balance set balance = amount + (select balance from balance where user_uuid = second_userUUID)
 where user_uuid = second_userUUID;
 $$ language sql;
+
+create or replace function unreserve_money(userUUID uuid, serviceUUID uuid, orderUUID uuid, amount bigint) returns void as $$
+delete from reserve where user_uuid = userUUID and service_uuid = serviceUUID and order_uuid = orderUUID and reserve = amount
+and id in (select id from reserve where user_uuid = userUUID and service_uuid = serviceUUID and order_uuid = orderUUID and reserve = amount LIMIT 1);
+UPDATE balance set balance = amount + (select balance from balance where user_uuid = userUUID)
+where user_uuid = userUUID;
+$$ language sql;

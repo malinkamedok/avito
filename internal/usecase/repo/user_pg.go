@@ -111,6 +111,7 @@ func (u *UserRepo) CreateNewBalance(ctx context.Context, user uuid.UUID, sum uin
 		return fmt.Errorf("error in executing query %w", err)
 	}
 	defer rows.Close()
+	log.Println("Successfully executed CreateNewBalance query")
 	return nil
 }
 
@@ -218,6 +219,19 @@ func (u *UserRepo) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID uu
 		return fmt.Errorf("error in executing query %w", err)
 	}
 	defer rows.Close()
-	log.Println("Successfully executed UserToUserMoneyTransfer")
+	log.Println("Successfully executed UserToUserMoneyTransfer query")
+	return nil
+}
+
+func (u *UserRepo) UnreserveMoney(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	query := `SELECT unreserve_money($1, $2, $3, $4)`
+
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
+	if err != nil {
+		log.Println("Cannot execute query to unreserve money")
+		return fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed UnreserveMoney query")
 	return nil
 }

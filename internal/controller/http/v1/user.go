@@ -20,6 +20,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.GET("/get-reserve/:id", us.getReserve)
 	handler.POST("/accept-income", us.acceptIncome)
 	handler.POST("/transfer-money", us.transferMoney)
+	handler.POST("/unreserve-money", us.unreserveMoney)
 }
 
 type appendRequest struct {
@@ -45,6 +46,13 @@ type transferRequest struct {
 	FirstUserUUID  uuid.UUID `json:"firstUserUUID"`
 	SecondUserUUID uuid.UUID `json:"secondUserUUID"`
 	Amount         uint64    `json:"amount"`
+}
+
+type unreserveRequest struct {
+	UserUUID    uuid.UUID `json:"userUUID"`
+	ServiceUUID uuid.UUID `json:"serviceUUID"`
+	OrderUUID   uuid.UUID `json:"orderUUID"`
+	Amount      uint64    `json:"amount"`
 }
 
 func (u *userRoutes) append(c *gin.Context) {
@@ -130,6 +138,20 @@ func (u *userRoutes) transferMoney(c *gin.Context) {
 	err := u.t.UserToUserMoneyTransfer(c.Request.Context(), request.FirstUserUUID, request.SecondUserUUID, request.Amount)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in transfering money")
+		return
+	}
+	c.JSONP(http.StatusOK, nil)
+}
+
+func (u *userRoutes) unreserveMoney(c *gin.Context) {
+	var request unreserveRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		errorResponse(c, http.StatusBadRequest, "Error in request credentials")
+		return
+	}
+	err := u.t.UnreserveMoney(c.Request.Context(), request.UserUUID, request.ServiceUUID, request.OrderUUID, request.Amount)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in unreserving money")
 		return
 	}
 	c.JSONP(http.StatusOK, nil)

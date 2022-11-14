@@ -66,7 +66,8 @@ func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serv
 		return err
 	}
 	if !exists {
-		return u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, amount)
+		fmt.Println("User reserve balance created. Try to reserve money again")
+		return u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, 0)
 	}
 	enough, err := u.repo.CheckEnoughMoneyBalance(ctx, userUUID, amount)
 	if err != nil {
@@ -109,4 +110,23 @@ func (u *UserUseCase) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID
 		return fmt.Errorf("transfer amount must not be zero %w", err)
 	}
 	return u.repo.UserToUserMoneyTransfer(ctx, firstUserUUID, secondUserUUID, amount)
+}
+
+func (u *UserUseCase) UnreserveMoney(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	reserveExists, err := u.repo.CheckRequiredReserveExistence(ctx, userUUID, serviceUUID, orderUUID, amount)
+	if err != nil {
+		return err
+	}
+	if !reserveExists {
+		return fmt.Errorf("requested reserve does not exist")
+	}
+	balanceExists, err := u.repo.CheckUserBalanceExistence(ctx, userUUID)
+	if err != nil {
+		return err
+	}
+	if !balanceExists {
+		fmt.Println("User balance created. Try to unreserve money again")
+		return u.repo.CreateNewBalance(ctx, userUUID, 0)
+	}
+	return u.repo.UnreserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
