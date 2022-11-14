@@ -141,6 +141,27 @@ func (u *UserRepo) GetBalance(ctx context.Context, user uuid.UUID) (int64, error
 	return balance, nil
 }
 
+func (u *UserRepo) GetReserve(ctx context.Context, user uuid.UUID) (int64, error) {
+	query := `SELECT reserve FROM reserve WHERE user_uuid = $1`
+	rows, err := u.Pool.Query(ctx, query, user)
+	if err != nil {
+		log.Println("Cannot execute query to get user reserve")
+		return -1, err
+	}
+	defer rows.Close()
+	log.Println("Successfully executed GetReserve query")
+
+	var reserve int64
+	for rows.Next() {
+		err = rows.Scan(&reserve)
+		if err != nil {
+			log.Println("cannot scan reserve")
+			return -1, fmt.Errorf("cannot scan value")
+		}
+	}
+	return reserve, nil
+}
+
 func (u *UserRepo) ReserveMoney(ctx context.Context, balanceUUID uuid.UUID, reserveUUID uuid.UUID, amount uint64) error {
 	query := `SELECT reserve_money($1, $2, $3)`
 

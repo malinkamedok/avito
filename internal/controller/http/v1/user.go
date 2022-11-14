@@ -17,6 +17,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.POST("/append", us.append)
 	handler.GET("/get-balance/:id", us.getBalance)
 	handler.POST("/reserve-money", us.reserveMoney)
+	handler.GET("/get-reserve/:id", us.getReserve)
 }
 
 type appendRequest struct {
@@ -56,6 +57,20 @@ func (u *userRoutes) getBalance(c *gin.Context) {
 		return
 	}
 	c.JSONP(http.StatusOK, balance)
+}
+
+func (u *userRoutes) getReserve(c *gin.Context) {
+	userUUID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing user uuid")
+		return
+	}
+	reserve, err := u.t.GetReserve(c.Request.Context(), userUUID)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in getting user balance")
+		return
+	}
+	c.JSONP(http.StatusOK, reserve)
 }
 
 func (u *userRoutes) reserveMoney(c *gin.Context) {

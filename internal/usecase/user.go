@@ -49,6 +49,17 @@ func (u *UserUseCase) GetBalance(ctx context.Context, user uuid.UUID) (int64, er
 	return u.repo.GetBalance(ctx, user)
 }
 
+func (u *UserUseCase) GetReserve(ctx context.Context, user uuid.UUID) (int64, error) {
+	exists, err := u.repo.CheckUserReserveExistence(ctx, user)
+	if err != nil {
+		return -1, err
+	}
+	if !exists {
+		fmt.Errorf("user does not have any reserved maney %w", err)
+	}
+	return u.repo.GetReserve(ctx, user)
+}
+
 func (u *UserUseCase) ReserveMoney(ctx context.Context, balanceUUID uuid.UUID, reserveUUID uuid.UUID, amount uint64) error {
 	exists, err := u.repo.CheckUserReserveExistence(ctx, reserveUUID)
 	if err != nil {
