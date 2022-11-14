@@ -23,6 +23,7 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.POST("/transfer-money", us.transferMoney)
 	handler.POST("/unreserve-money", us.unreserveMoney)
 	handler.GET("/get-transactions-by-date/:id", us.getTransactionListByDate)
+	handler.GET("/get-transactions-by-sum/:id", us.getTransactionListBySum)
 }
 
 type appendRequest struct {
@@ -172,7 +173,21 @@ func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
 	}
 	transactions, err := u.t.GetTransactionListByDate(c.Request.Context(), userUUID)
 	if err != nil {
-		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list")
+		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list by date")
+		return
+	}
+	c.JSONP(http.StatusOK, transactionListResponse{List: transactions})
+}
+
+func (u *userRoutes) getTransactionListBySum(c *gin.Context) {
+	userUUID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing user uuid")
+		return
+	}
+	transactions, err := u.t.GetTransactionListBySum(c.Request.Context(), userUUID)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list by sum")
 		return
 	}
 	c.JSONP(http.StatusOK, transactionListResponse{List: transactions})

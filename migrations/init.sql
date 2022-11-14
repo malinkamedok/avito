@@ -69,13 +69,6 @@ UPDATE balance set balance = amount + (select balance from balance where user_uu
 where user_uuid = userUUID;
 $$ language sql;
 
--- Задача: необходимо предоставить метод получения списка транзакций с комментариями
--- откуда и зачем были начислены/списаны средства с баланса.
--- Необходимо предусмотреть пагинацию и сортировку по сумме и дате.
-
-
---select service_name, money_amount, operation_date from report where user_uuid = '9dcb3c84-139f-4b80-b3ca-115a8c64fc60' order by operation_date;
-
 create or replace function create_new_balance(userUUID uuid, userBalance bigint) returns void as $$
 INSERT INTO balance(user_uuid, balance) VALUES(userUUID, userBalance);
 insert into report(user_uuid, service_name, money_amount, operation_date) values (userUUID, 'Append Balance', userBalance, CURRENT_TIMESTAMP);

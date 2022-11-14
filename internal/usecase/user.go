@@ -67,8 +67,10 @@ func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serv
 		return err
 	}
 	if !exists {
-		fmt.Println("User reserve balance created. Try to reserve money again")
-		return u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, 0)
+		err := u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, 0)
+		if err != nil {
+			return fmt.Errorf("error in creating user reserve %w", err)
+		}
 	}
 	enough, err := u.repo.CheckEnoughMoneyBalance(ctx, userUUID, amount)
 	if err != nil {
@@ -141,4 +143,15 @@ func (u *UserUseCase) GetTransactionListByDate(ctx context.Context, userUUID uui
 		return nil, fmt.Errorf("user does not have any transactions %w", err)
 	}
 	return u.repo.GetTransactionListByDate(ctx, userUUID)
+}
+
+func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+	exists, err := u.repo.CheckTransactions(ctx, userUUID)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, fmt.Errorf("user does not have any transactions %w", err)
+	}
+	return u.repo.GetTransactionListBySum(ctx, userUUID)
 }
