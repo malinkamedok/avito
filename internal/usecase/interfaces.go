@@ -21,9 +21,9 @@ type (
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, string, uuid.UUID, uint64) error
 		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
-		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
+		GetTransactionListByDate(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 		CheckTransactions(context.Context, uuid.UUID) (bool, error)
-		GetTransactionListBySum(context.Context, uuid.UUID) ([]entity.Transaction, error)
+		GetTransactionListBySum(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 	}
 
 	UserContract interface {
@@ -34,7 +34,7 @@ type (
 		AcceptIncome(context.Context, uuid.UUID, uuid.UUID, string, uuid.UUID, uint64) error
 		UserToUserMoneyTransfer(context.Context, uuid.UUID, uuid.UUID, uint64) error
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
-		GetTransactionListByDate(context.Context, uuid.UUID) ([]entity.Transaction, error)
-		GetTransactionListBySum(context.Context, uuid.UUID) ([]entity.Transaction, error)
+		GetTransactionListByDate(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
+		GetTransactionListBySum(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 	}
 )

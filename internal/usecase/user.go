@@ -62,16 +62,17 @@ func (u *UserUseCase) GetReserve(ctx context.Context, user uuid.UUID) ([]int64, 
 }
 
 func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
-	exists, err := u.repo.CheckUserReserveExistence(ctx, userUUID)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		err := u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, 0)
-		if err != nil {
-			return fmt.Errorf("error in creating user reserve %w", err)
-		}
-	}
+	//exists, err := u.repo.CheckUserReserveExistence(ctx, userUUID)
+	//if err != nil {
+	//	return err
+	//}
+	//if !exists {
+	//err := u.repo.CreateNewReserve(ctx, userUUID, serviceUUID, orderUUID, 0)
+	//if err != nil {
+	//	return fmt.Errorf("error in creating user reserve %w", err)
+	//}
+	//	return fmt.Errorf("user does not have any reserves %w", err)
+	//}
 	enough, err := u.repo.CheckEnoughMoneyBalance(ctx, userUUID, amount)
 	if err != nil {
 		return err
@@ -134,7 +135,7 @@ func (u *UserUseCase) UnreserveMoney(ctx context.Context, userUUID uuid.UUID, se
 	return u.repo.UnreserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
-func (u *UserUseCase) GetTransactionListByDate(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+func (u *UserUseCase) GetTransactionListByDate(ctx context.Context, userUUID uuid.UUID, limit uint64, offset uint64) ([]entity.Transaction, error) {
 	exists, err := u.repo.CheckTransactions(ctx, userUUID)
 	if err != nil {
 		return nil, err
@@ -142,10 +143,10 @@ func (u *UserUseCase) GetTransactionListByDate(ctx context.Context, userUUID uui
 	if !exists {
 		return nil, fmt.Errorf("user does not have any transactions %w", err)
 	}
-	return u.repo.GetTransactionListByDate(ctx, userUUID)
+	return u.repo.GetTransactionListByDate(ctx, userUUID, limit, offset)
 }
 
-func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid.UUID) ([]entity.Transaction, error) {
+func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid.UUID, limit uint64, offset uint64) ([]entity.Transaction, error) {
 	exists, err := u.repo.CheckTransactions(ctx, userUUID)
 	if err != nil {
 		return nil, err
@@ -153,5 +154,5 @@ func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid
 	if !exists {
 		return nil, fmt.Errorf("user does not have any transactions %w", err)
 	}
-	return u.repo.GetTransactionListBySum(ctx, userUUID)
+	return u.repo.GetTransactionListBySum(ctx, userUUID, limit, offset)
 }
