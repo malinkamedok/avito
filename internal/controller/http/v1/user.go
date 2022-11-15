@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 )
 
 type userRoutes struct {
@@ -22,8 +23,8 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
 	handler.POST("/accept-income", us.acceptIncome)
 	handler.POST("/transfer-money", us.transferMoney)
 	handler.POST("/unreserve-money", us.unreserveMoney)
-	handler.GET("/get-transactions-by-date/:id", us.getTransactionListByDate)
-	handler.GET("/get-transactions-by-sum/:id", us.getTransactionListBySum)
+	handler.GET("/get-transactions-by-date/:id/:limit/:offset", us.getTransactionListByDate)
+	handler.GET("/get-transactions-by-sum/:id/:limit/:offset", us.getTransactionListBySum)
 }
 
 type appendRequest struct {
@@ -99,7 +100,7 @@ func (u *userRoutes) getReserve(c *gin.Context) {
 	}
 	reserve, err := u.t.GetReserve(c.Request.Context(), userUUID)
 	if err != nil {
-		errorResponse(c, http.StatusInternalServerError, "error in getting user balance")
+		errorResponse(c, http.StatusInternalServerError, "error in getting user reserve")
 		return
 	}
 	c.JSONP(http.StatusOK, reserveResponse{reserve})
@@ -171,7 +172,17 @@ func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
 		errorResponse(c, http.StatusInternalServerError, "error in parsing user uuid")
 		return
 	}
-	transactions, err := u.t.GetTransactionListByDate(c.Request.Context(), userUUID)
+	limit, err := strconv.ParseUint(c.Param("limit"), 10, 64)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing limit")
+		return
+	}
+	offset, err := strconv.ParseUint(c.Param("offset"), 10, 64)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing offset")
+		return
+	}
+	transactions, err := u.t.GetTransactionListByDate(c.Request.Context(), userUUID, limit, offset)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list by date")
 		return
@@ -185,7 +196,17 @@ func (u *userRoutes) getTransactionListBySum(c *gin.Context) {
 		errorResponse(c, http.StatusInternalServerError, "error in parsing user uuid")
 		return
 	}
-	transactions, err := u.t.GetTransactionListBySum(c.Request.Context(), userUUID)
+	limit, err := strconv.ParseUint(c.Param("limit"), 10, 64)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing limit")
+		return
+	}
+	offset, err := strconv.ParseUint(c.Param("offset"), 10, 64)
+	if err != nil {
+		errorResponse(c, http.StatusInternalServerError, "error in parsing offset")
+		return
+	}
+	transactions, err := u.t.GetTransactionListBySum(c.Request.Context(), userUUID, limit, offset)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, "error in getting transaction list by sum")
 		return
