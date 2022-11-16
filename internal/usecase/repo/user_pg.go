@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"log"
+	"time"
 )
 
 type UserRepo struct {
@@ -303,4 +304,50 @@ func (u *UserRepo) GetTransactionListBySum(ctx context.Context, userUUID uuid.UU
 		transactions = append(transactions, transaction)
 	}
 	return transactions, nil
+}
+
+func (u *UserRepo) CheckAnyTransaction(ctx context.Context, yearMonth time.Time) (bool, error) {
+	query := `select check_transactions_by_date($1)`
+
+	rows, err := u.Pool.Query(ctx, query, yearMonth)
+	if err != nil {
+		log.Println("Cannot execute query to check if any transaction exist")
+		return false, fmt.Errorf("error in executing query %w", err)
+	}
+	defer rows.Close()
+
+	var result bool
+	for rows.Next() {
+		err = rows.Scan(&result)
+		if err != nil {
+			log.Println("cannot scan result")
+			return false, fmt.Errorf("cannot scan value")
+		}
+	}
+	return result, nil
+}
+
+func (u *UserRepo) GetAllTransactions(ctx context.Context, serviceUUID uuid.UUID, yearMonth time.Time) ([]entity.Report, error) {
+	query := `select * from get_all_transactions($1, $2);`
+
+	rows, err := u.Pool.Query(ctx, query, serviceUUID, yearMonth)
+	if err != nil {
+		log.Println("Cannot execute query to get all transaction list")
+		return nil, fmt.Errorf("cannot scan value %w", err)
+	}
+	defer rows.Close()
+	log.Println("Successfully executed GetAllTransactions query")
+
+	var reports []entity.Report
+	for rows.Next() {
+		var report entity.Report
+		err = rows.Scan(&report.ServiceName, &report.ProceedSum)
+		if err != nil {
+			log.Println("cannot scan transactions")
+			fmt.Println(err)
+			return nil, fmt.Errorf("cannot scan value %v", err)
+		}
+		reports = append(reports, report)
+	}
+	return reports, nil
 }

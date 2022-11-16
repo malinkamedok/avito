@@ -4,6 +4,7 @@ import (
 	"avito/internal/entity"
 	"context"
 	"github.com/google/uuid"
+	"time"
 )
 
 type (
@@ -24,6 +25,8 @@ type (
 		GetTransactionListByDate(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 		CheckTransactions(context.Context, uuid.UUID) (bool, error)
 		GetTransactionListBySum(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
+		CheckAnyTransaction(context.Context, time.Time) (bool, error)
+		GetAllTransactions(context.Context, uuid.UUID, time.Time) ([]entity.Report, error)
 	}
 
 	UserContract interface {
@@ -36,5 +39,6 @@ type (
 		UnreserveMoney(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, uint64) error
 		GetTransactionListByDate(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 		GetTransactionListBySum(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
+		GetAllTransactions(context.Context, uuid.UUID, time.Time) ([]entity.Report, error)
 	}
 )
