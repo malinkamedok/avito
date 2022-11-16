@@ -199,10 +199,10 @@ func (u *UserRepo) ReserveMoney(ctx context.Context, userUUID uuid.UUID, service
 	return nil
 }
 
-func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, serviceName string, orderUUID uuid.UUID, amount uint64) error {
-	query := `SELECT accept_income($1, $2, $3, $4, $5)`
+func (u *UserRepo) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
+	query := `SELECT accept_income($1, $2, $3, $4)`
 
-	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, serviceName, orderUUID, amount)
+	rows, err := u.Pool.Query(ctx, query, userUUID, serviceUUID, orderUUID, amount)
 	if err != nil {
 		log.Println("Cannot execute query to accept income")
 		return fmt.Errorf("error in executing query %w", err)
@@ -259,7 +259,7 @@ func (u *UserRepo) CheckTransactions(ctx context.Context, userUUID uuid.UUID) (b
 }
 
 func (u *UserRepo) GetTransactionListByDate(ctx context.Context, userUUID uuid.UUID, limit uint64, offset uint64) ([]entity.Transaction, error) {
-	query := `select service_name, money_amount, operation_date from report where user_uuid = $1 order by operation_date LIMIT $2 OFFSET $3`
+	query := `select service.service_name, report.money_amount, report.operation_date from report join service on report.service_uuid = service.id where user_uuid = $1 order by operation_date LIMIT $2 OFFSET $3`
 
 	rows, err := u.Pool.Query(ctx, query, userUUID, limit, offset)
 	if err != nil {
@@ -283,7 +283,7 @@ func (u *UserRepo) GetTransactionListByDate(ctx context.Context, userUUID uuid.U
 }
 
 func (u *UserRepo) GetTransactionListBySum(ctx context.Context, userUUID uuid.UUID, limit uint64, offset uint64) ([]entity.Transaction, error) {
-	query := `select service_name, money_amount, operation_date from report where user_uuid = $1 order by money_amount LIMIT $2 OFFSET $3`
+	query := `select service.service_name, report.money_amount, report.operation_date from report join service on report.service_uuid = service.id where user_uuid = $1 order by money_amount LIMIT $2 OFFSET $3`
 
 	rows, err := u.Pool.Query(ctx, query, userUUID, limit, offset)
 	if err != nil {
@@ -327,10 +327,10 @@ func (u *UserRepo) CheckAnyTransaction(ctx context.Context, yearMonth time.Time)
 	return result, nil
 }
 
-func (u *UserRepo) GetAllTransactions(ctx context.Context, serviceUUID uuid.UUID, yearMonth time.Time) ([]entity.Report, error) {
-	query := `select * from get_all_transactions($1, $2);`
+func (u *UserRepo) GetAllTransactions(ctx context.Context, yearMonth time.Time) ([]entity.Report, error) {
+	query := `select * from get_all_transactions($1);`
 
-	rows, err := u.Pool.Query(ctx, query, serviceUUID, yearMonth)
+	rows, err := u.Pool.Query(ctx, query, yearMonth)
 	if err != nil {
 		log.Println("Cannot execute query to get all transaction list")
 		return nil, fmt.Errorf("cannot scan value %w", err)
