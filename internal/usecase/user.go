@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"log"
+	"time"
 )
 
 type UserUseCase struct {
@@ -144,4 +145,15 @@ func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid
 		return nil, fmt.Errorf("user does not have any transactions %w", err)
 	}
 	return u.repo.GetTransactionListBySum(ctx, userUUID, limit, offset)
+}
+
+func (u *UserUseCase) GetAllTransactions(ctx context.Context, serviceUUID uuid.UUID, yearMonth time.Time) ([]entity.Report, error) {
+	exists, err := u.repo.CheckAnyTransaction(ctx, yearMonth)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, fmt.Errorf("report does not have any transactions %w", err)
+	}
+	return u.repo.GetAllTransactions(ctx, serviceUUID, yearMonth)
 }

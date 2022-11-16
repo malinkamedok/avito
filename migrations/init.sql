@@ -73,3 +73,13 @@ create or replace function create_new_balance(userUUID uuid, userBalance bigint)
 INSERT INTO balance(user_uuid, balance) VALUES(userUUID, userBalance);
 insert into report(user_uuid, service_name, money_amount, operation_date) values (userUUID, 'Append Balance', userBalance, CURRENT_TIMESTAMP);
 $$ language sql;
+
+create or replace function check_transactions_by_date(IN timePeriod timestamp, OUT res bool) as
+'select exists(select * from report where operation_date >= timePeriod
+                                      and operation_date < date_trunc(''month'', timePeriod + interval ''1 month''))'
+    language sql;
+
+create or replace function get_all_transactions(serviceUUID uuid, timePeriod timestamp) returns table (service_name text, money_amount bigint) as $$
+select distinct service_name, (select sum(money_amount) from report where service_uuid = serviceUUID and operation_date >= timePeriod
+                                                             and operation_date < date_trunc('month', timePeriod + interval '1 month')) from report where service_uuid = serviceUUID
+    $$ language sql;
