@@ -73,7 +73,7 @@ func (u *UserUseCase) ReserveMoney(ctx context.Context, userUUID uuid.UUID, serv
 	return u.repo.ReserveMoney(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
-func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, serviceName string, orderUUID uuid.UUID, amount uint64) error {
+func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serviceUUID uuid.UUID, orderUUID uuid.UUID, amount uint64) error {
 	exists, err := u.repo.CheckRequiredReserveExistence(ctx, userUUID, serviceUUID, orderUUID, amount)
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func (u *UserUseCase) AcceptIncome(ctx context.Context, userUUID uuid.UUID, serv
 	if !exists {
 		return fmt.Errorf("required reserve does not exist %w", err)
 	}
-	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, serviceName, orderUUID, amount)
+	return u.repo.AcceptIncome(ctx, userUUID, serviceUUID, orderUUID, amount)
 }
 
 func (u *UserUseCase) UserToUserMoneyTransfer(ctx context.Context, firstUserUUID uuid.UUID, secondUserUUID uuid.UUID, amount uint64) error {
@@ -147,7 +147,7 @@ func (u *UserUseCase) GetTransactionListBySum(ctx context.Context, userUUID uuid
 	return u.repo.GetTransactionListBySum(ctx, userUUID, limit, offset)
 }
 
-func (u *UserUseCase) GetAllTransactions(ctx context.Context, serviceUUID uuid.UUID, yearMonth time.Time) ([]entity.Report, error) {
+func (u *UserUseCase) GetAllTransactions(ctx context.Context, yearMonth time.Time) ([]entity.Report, error) {
 	exists, err := u.repo.CheckAnyTransaction(ctx, yearMonth)
 	if err != nil {
 		return nil, err
@@ -155,5 +155,5 @@ func (u *UserUseCase) GetAllTransactions(ctx context.Context, serviceUUID uuid.U
 	if !exists {
 		return nil, fmt.Errorf("report does not have any transactions %w", err)
 	}
-	return u.repo.GetAllTransactions(ctx, serviceUUID, yearMonth)
+	return u.repo.GetAllTransactions(ctx, yearMonth)
 }
