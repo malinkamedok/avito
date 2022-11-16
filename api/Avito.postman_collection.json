@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c374556b-da5a-4882-8536-25f72e21334b",
+		"_postman_id": "bcb2bbeb-fcc1-4ab0-a733-6ddb52a09800",
 		"name": "Avito",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24394459"
 	},
 	"item": [
 		{
@@ -190,6 +191,26 @@
 						"9dcb3c84-139f-4b80-b3ca-115a8c64fc60",
 						"10",
 						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllTransactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/v1/get-all-transactions/fd3f454f-edeb-46eb-a4a1-29493109fe1a/2022-Nov",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"v1",
+						"get-all-transactions",
+						"fd3f454f-edeb-46eb-a4a1-29493109fe1a",
+						"2022-Nov"
 					]
 				}
 			},
