@@ -1,9 +1,58 @@
 basePath: /
+definitions:
+  avito_internal_controller_http_v1.appendRequest:
+    properties:
+      sum:
+        type: integer
+      user:
+        type: string
+    type: object
+  avito_internal_controller_http_v1.errResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  internal_controller_http_v1.appendRequest:
+    properties:
+      sum:
+        type: integer
+      user:
+        type: string
+    type: object
+  internal_controller_http_v1.errResponse:
+    properties:
+      error:
+        type: string
+    type: object
 host: localhost:9000
 info:
   contact: {}
   description: Микросервис для работы с балансом пользователей
   title: Тестовое задание на позицию стажёра-бэкендера от Avito Tech
   version: "1.0"
-paths: {}
+paths:
+  /v1/append:
+    post:
+      description: create or update user balance
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/avito_internal_controller_http_v1.appendRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: append balance to user
+      tags:
+      - Posts
 swagger: "2.0"

@@ -61,6 +61,15 @@ type unreserveRequest struct {
 	Amount      uint64    `json:"amount"`
 }
 
+// AppendBalance godoc
+// @Summary append balance to user
+// @Tags Posts
+// @Description create or update user balance
+// @Param     request body appendRequest true "query params"
+// @Success     200 {object} nil
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/appendBalance [post]
 func (u *userRoutes) append(c *gin.Context) {
 	var req appendRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

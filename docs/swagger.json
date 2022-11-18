@@ -8,5 +8,83 @@
     },
     "host": "localhost:9000",
     "basePath": "/",
-    "paths": {}
+    "paths": {
+        "/v1/append": {
+            "post": {
+                "description": "create or update user balance",
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "append balance to user",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.appendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "avito_internal_controller_http_v1.appendRequest": {
+            "type": "object",
+            "properties": {
+                "sum": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "avito_internal_controller_http_v1.errResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.appendRequest": {
+            "type": "object",
+            "properties": {
+                "sum": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.errResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }
