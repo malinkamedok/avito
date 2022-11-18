@@ -18,11 +18,11 @@ const docTemplate = `{
     "paths": {
         "/v1/accept-income": {
             "post": {
-                "description": "the service was provided. accept income",
+                "description": "Принимает id пользователя, id услуги, id заказа, сумму.",
                 "tags": [
                     "Posts"
                 ],
-                "summary": "accept income",
+                "summary": "Метод признания выручки – списывает из резерва деньги, добавляет данные в отчет для бухгалтерии.",
                 "parameters": [
                     {
                         "description": "query params",
@@ -30,7 +30,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.acceptRequest"
+                            "$ref": "#/definitions/internal_controller_http_v1.acceptRequest"
                         }
                     }
                 ],
@@ -41,13 +41,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -55,11 +55,11 @@ const docTemplate = `{
         },
         "/v1/append": {
             "post": {
-                "description": "create or update user balance",
+                "description": "Принимает id пользователя и сколько средств зачислить.",
                 "tags": [
                     "Posts"
                 ],
-                "summary": "append balance to user",
+                "summary": "Метод начисления средств на баланс",
                 "parameters": [
                     {
                         "description": "query params",
@@ -67,7 +67,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.appendRequest"
+                            "$ref": "#/definitions/internal_controller_http_v1.appendRequest"
                         }
                     }
                 ],
@@ -78,13 +78,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -92,15 +92,15 @@ const docTemplate = `{
         },
         "/v1/get-all-transactions/{date}": {
             "get": {
-                "description": "get all transactions list in one month",
+                "description": "На вход: год-месяц. На выходе ссылка на CSV файл.",
                 "tags": [
                     "Gets"
                 ],
-                "summary": "get all transactions list in one month",
+                "summary": "Метод для получения месячного отчета.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "YYYY-Mmm",
+                        "description": "YYYY-Mmm (example: 2022-Nov)",
                         "name": "date",
                         "in": "path",
                         "required": true
@@ -110,19 +110,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.transactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -130,11 +130,11 @@ const docTemplate = `{
         },
         "/v1/get-balance/{id}": {
             "get": {
-                "description": "get user balance",
+                "description": "Принимает на вход id пользователя",
                 "tags": [
                     "Gets"
                 ],
-                "summary": "get user balance",
+                "summary": "Метод получения баланса пользователя",
                 "parameters": [
                     {
                         "type": "string",
@@ -154,13 +154,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -172,7 +172,7 @@ const docTemplate = `{
                 "tags": [
                     "Gets"
                 ],
-                "summary": "get user reserve",
+                "summary": "Принимает на вход id пользователя",
                 "parameters": [
                     {
                         "type": "string",
@@ -192,13 +192,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -206,11 +206,11 @@ const docTemplate = `{
         },
         "/v1/get-transactions-by-date/{id}/{limit}/{offset}": {
             "get": {
-                "description": "get transactions list by date",
+                "description": "Принимает id пользователя, количество выводимых строк, количество пропускаемых строк.",
                 "tags": [
                     "Gets"
                 ],
-                "summary": "get transactions list by date",
+                "summary": "Метод получения списка транзакция пользователя с сортировкой по дате",
                 "parameters": [
                     {
                         "type": "string",
@@ -238,19 +238,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.transactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -258,11 +258,11 @@ const docTemplate = `{
         },
         "/v1/get-transactions-by-sum/{id}/{limit}/{offset}": {
             "get": {
-                "description": "get transactions list by sum",
+                "description": "Принимает id пользователя, количество выводимых строк, количество пропускаемых строк.",
                 "tags": [
                     "Gets"
                 ],
-                "summary": "get transactions list by sum",
+                "summary": "Метод получения списка транзакция пользователя с сортировкой по сумме",
                 "parameters": [
                     {
                         "type": "string",
@@ -290,19 +290,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.transactionListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -310,11 +310,11 @@ const docTemplate = `{
         },
         "/v1/reserve-money": {
             "post": {
-                "description": "create user reserve",
+                "description": "Принимает id пользователя, id услуги, id заказа, стоимость.",
                 "tags": [
                     "Posts"
                 ],
-                "summary": "reserve user money",
+                "summary": "Метод резервирования средств с основного баланса на отдельном счете",
                 "parameters": [
                     {
                         "description": "query params",
@@ -322,7 +322,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.reserveRequest"
+                            "$ref": "#/definitions/internal_controller_http_v1.reserveRequest"
                         }
                     }
                 ],
@@ -333,13 +333,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -347,11 +347,11 @@ const docTemplate = `{
         },
         "/v1/transfer-money": {
             "post": {
-                "description": "user to user money transfer",
+                "description": "Принимает на вход id пользователя-отправителя, id пользователя-получателя, сумму.",
                 "tags": [
                     "Posts"
                 ],
-                "summary": "transfer money",
+                "summary": "Метод перевода средств от пользователя к пользователю",
                 "parameters": [
                     {
                         "description": "query params",
@@ -359,7 +359,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.transferRequest"
+                            "$ref": "#/definitions/internal_controller_http_v1.transferRequest"
                         }
                     }
                 ],
@@ -370,13 +370,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }
@@ -384,11 +384,11 @@ const docTemplate = `{
         },
         "/v1/unreserve-money": {
             "post": {
-                "description": "the service was not provided. return money to user balance",
+                "description": "Принимает id пользователя, id услуги, id заказа, стоимость.",
                 "tags": [
                     "Posts"
                 ],
-                "summary": "unreserve user money",
+                "summary": "Метод разрезервирования средств пользователя",
                 "parameters": [
                     {
                         "description": "query params",
@@ -396,7 +396,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.unreserveRequest"
+                            "$ref": "#/definitions/internal_controller_http_v1.unreserveRequest"
                         }
                     }
                 ],
@@ -407,13 +407,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                            "$ref": "#/definitions/internal_controller_http_v1.errResponse"
                         }
                     }
                 }

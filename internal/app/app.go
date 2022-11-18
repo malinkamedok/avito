@@ -17,7 +17,7 @@ import (
 func Run(cfg *config.Config) {
 	pg, err := postgres.New(cfg)
 	if err != nil {
-		log.Fatal("Cannot connnect to Postgres")
+		log.Fatal("Cannot connect to Postgres")
 	}
 
 	us := usecase.NewUserUseCase(repo.NewUserRepo(pg))

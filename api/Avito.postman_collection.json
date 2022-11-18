@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "bcb2bbeb-fcc1-4ab0-a733-6ddb52a09800",
+		"_postman_id": "82400e2a-5c6c-42c9-9dda-4a138708ecf4",
 		"name": "Avito",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24394459"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -139,7 +138,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userUUID\" : \"9dcb3c84-139f-4b80-b3ca-115a8c64fc60\",\n    \"serviceUUID\" : \"fd3f454f-edeb-46eb-a4a1-29493109fe1a\",\n    \"orderUUID\" : \"0f9571ce-3814-4241-8fd1-280e6474bc72\",\n    \"amount\" : 709\n}"
+					"raw": "{\n    \"userUUID\" : \"9dcb3c84-139f-4b80-b3ca-115a8c64fc60\",\n    \"serviceUUID\" : \"103fb536-6f66-42b6-a49b-16c359e16635\",\n    \"orderUUID\" : \"0f9571ce-3814-4241-8fd1-280e6474bc72\",\n    \"amount\" : 709\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/v1/unreserve-money",

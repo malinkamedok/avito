@@ -140,57 +140,58 @@ info:
 paths:
   /v1/accept-income:
     post:
-      description: the service was provided. accept income
+      description: Принимает id пользователя, id услуги, id заказа, сумму.
       parameters:
       - description: query params
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/avito_internal_controller_http_v1.acceptRequest'
+          $ref: '#/definitions/internal_controller_http_v1.acceptRequest'
       responses:
         "200":
           description: OK
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: accept income
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод признания выручки – списывает из резерва деньги, добавляет данные
+        в отчет для бухгалтерии.
       tags:
       - Posts
   /v1/append:
     post:
-      description: create or update user balance
+      description: Принимает id пользователя и сколько средств зачислить.
       parameters:
       - description: query params
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/avito_internal_controller_http_v1.appendRequest'
+          $ref: '#/definitions/internal_controller_http_v1.appendRequest'
       responses:
         "200":
           description: OK
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: append balance to user
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод начисления средств на баланс
       tags:
       - Posts
   /v1/get-all-transactions/{date}:
     get:
-      description: get all transactions list in one month
+      description: 'На вход: год-месяц. На выходе ссылка на CSV файл.'
       parameters:
-      - description: YYYY-Mmm
+      - description: 'YYYY-Mmm (example: 2022-Nov)'
         in: path
         name: date
         required: true
@@ -199,21 +200,21 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+            $ref: '#/definitions/internal_controller_http_v1.transactionListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: get all transactions list in one month
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод для получения месячного отчета.
       tags:
       - Gets
   /v1/get-balance/{id}:
     get:
-      description: get user balance
+      description: Принимает на вход id пользователя
       parameters:
       - description: user id
         in: path
@@ -228,12 +229,12 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: get user balance
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод получения баланса пользователя
       tags:
       - Gets
   /v1/get-reserve/{id}:
@@ -253,17 +254,18 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: get user reserve
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Принимает на вход id пользователя
       tags:
       - Gets
   /v1/get-transactions-by-date/{id}/{limit}/{offset}:
     get:
-      description: get transactions list by date
+      description: Принимает id пользователя, количество выводимых строк, количество
+        пропускаемых строк.
       parameters:
       - description: user id
         in: path
@@ -284,21 +286,22 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+            $ref: '#/definitions/internal_controller_http_v1.transactionListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: get transactions list by date
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод получения списка транзакция пользователя с сортировкой по дате
       tags:
       - Gets
   /v1/get-transactions-by-sum/{id}/{limit}/{offset}:
     get:
-      description: get transactions list by sum
+      description: Принимает id пользователя, количество выводимых строк, количество
+        пропускаемых строк.
       parameters:
       - description: user id
         in: path
@@ -319,88 +322,89 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+            $ref: '#/definitions/internal_controller_http_v1.transactionListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: get transactions list by sum
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод получения списка транзакция пользователя с сортировкой по сумме
       tags:
       - Gets
   /v1/reserve-money:
     post:
-      description: create user reserve
+      description: Принимает id пользователя, id услуги, id заказа, стоимость.
       parameters:
       - description: query params
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/avito_internal_controller_http_v1.reserveRequest'
+          $ref: '#/definitions/internal_controller_http_v1.reserveRequest'
       responses:
         "200":
           description: OK
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: reserve user money
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод резервирования средств с основного баланса на отдельном счете
       tags:
       - Posts
   /v1/transfer-money:
     post:
-      description: user to user money transfer
+      description: Принимает на вход id пользователя-отправителя, id пользователя-получателя,
+        сумму.
       parameters:
       - description: query params
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/avito_internal_controller_http_v1.transferRequest'
+          $ref: '#/definitions/internal_controller_http_v1.transferRequest'
       responses:
         "200":
           description: OK
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: transfer money
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод перевода средств от пользователя к пользователю
       tags:
       - Posts
   /v1/unreserve-money:
     post:
-      description: the service was not provided. return money to user balance
+      description: Принимает id пользователя, id услуги, id заказа, стоимость.
       parameters:
       - description: query params
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/avito_internal_controller_http_v1.unreserveRequest'
+          $ref: '#/definitions/internal_controller_http_v1.unreserveRequest'
       responses:
         "200":
           description: OK
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
-      summary: unreserve user money
+            $ref: '#/definitions/internal_controller_http_v1.errResponse'
+      summary: Метод разрезервирования средств пользователя
       tags:
       - Posts
 swagger: "2.0"

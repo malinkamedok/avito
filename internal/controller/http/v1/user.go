@@ -64,9 +64,9 @@ type unreserveRequest struct {
 }
 
 // AppendBalance godoc
-// @Summary append balance to user
+// @Summary Метод начисления средств на баланс
 // @Tags Posts
-// @Description create or update user balance
+// @Description Принимает id пользователя и сколько средств зачислить.
 // @Param     request body appendRequest true "query params"
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
@@ -87,9 +87,9 @@ func (u *userRoutes) append(c *gin.Context) {
 }
 
 // GetBalance godoc
-// @Summary get user balance
+// @Summary Метод получения баланса пользователя
 // @Tags Gets
-// @Description get user balance
+// @Description Принимает на вход id пользователя
 // @Param       id  path 	 string  true "user id"
 // @Success     200 {object} uint64
 // @Failure     400 {object} errResponse
@@ -114,7 +114,7 @@ type reserveResponse struct {
 }
 
 // GetReserve godoc
-// @Summary get user reserve
+// @Summary Принимает на вход id пользователя
 // @Tags Gets
 // @Description get user reserve
 // @Param       id  path 	 string  true "user id"
@@ -137,9 +137,9 @@ func (u *userRoutes) getReserve(c *gin.Context) {
 }
 
 // ReserveMoney godoc
-// @Summary reserve user money
+// @Summary Метод резервирования средств с основного баланса на отдельном счете
 // @Tags Posts
-// @Description create user reserve
+// @Description Принимает id пользователя, id услуги, id заказа, стоимость.
 // @Param     request body reserveRequest true "query params"
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
@@ -160,9 +160,9 @@ func (u *userRoutes) reserveMoney(c *gin.Context) {
 }
 
 // AcceptIncome godoc
-// @Summary accept income
+// @Summary Метод признания выручки – списывает из резерва деньги, добавляет данные в отчет для бухгалтерии.
 // @Tags Posts
-// @Description the service was provided. accept income
+// @Description Принимает id пользователя, id услуги, id заказа, сумму.
 // @Param     request body acceptRequest true "query params"
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
@@ -183,9 +183,9 @@ func (u *userRoutes) acceptIncome(c *gin.Context) {
 }
 
 // TransferMoney godoc
-// @Summary transfer money
+// @Summary Метод перевода средств от пользователя к пользователю
 // @Tags Posts
-// @Description user to user money transfer
+// @Description Принимает на вход id пользователя-отправителя, id пользователя-получателя, сумму.
 // @Param     request body transferRequest true "query params"
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
@@ -206,9 +206,9 @@ func (u *userRoutes) transferMoney(c *gin.Context) {
 }
 
 // UnreserveMoney godoc
-// @Summary unreserve user money
+// @Summary Метод разрезервирования средств пользователя
 // @Tags Posts
-// @Description the service was not provided. return money to user balance
+// @Description Принимает id пользователя, id услуги, id заказа, стоимость.
 // @Param     request body unreserveRequest true "query params"
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
@@ -233,9 +233,9 @@ type transactionListResponse struct {
 }
 
 // GetTransactionsListByDate godoc
-// @Summary get transactions list by date
+// @Summary Метод получения списка транзакция пользователя с сортировкой по дате
 // @Tags Gets
-// @Description get transactions list by date
+// @Description Принимает id пользователя, количество выводимых строк, количество пропускаемых строк.
 // @Param       id  path 	 string  true "user id"
 // @Param		limit path uint64 true "amount of rows"
 // @Param		offset path uint64 true "amount of skipped rows"
@@ -268,9 +268,9 @@ func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
 }
 
 // GetTransactionsListBySum godoc
-// @Summary get transactions list by sum
+// @Summary Метод получения списка транзакция пользователя с сортировкой по сумме
 // @Tags Gets
-// @Description get transactions list by sum
+// @Description Принимает id пользователя, количество выводимых строк, количество пропускаемых строк.
 // @Param       id  path 	 string  true "user id"
 // @Param		limit path uint64 true "amount of rows"
 // @Param		offset path uint64 true "amount of skipped rows"
@@ -307,9 +307,9 @@ type allTransactionsListResponse struct {
 }
 
 // GetALLTransactions godoc
-// @Summary get all transactions list in one month
+// @Summary Метод для получения месячного отчета.
 // @Tags Gets
-// @Description get all transactions list in one month
+// @Description На вход: год-месяц. На выходе ссылка на CSV файл.
 // @Param       date  path 	 string  true "YYYY-Mmm (example: 2022-Nov)"
 // @Success     200 {object} transactionListResponse
 // @Failure     400 {object} errResponse
