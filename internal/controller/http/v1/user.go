@@ -5,6 +5,7 @@ import (
 	"avito/internal/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,10 +13,11 @@ import (
 
 type userRoutes struct {
 	t usecase.UserContract
+	r usecase.ReportContract
 }
 
-func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract) {
-	us := userRoutes{t: t}
+func newUserRoutes(handler *gin.RouterGroup, t usecase.UserContract, r usecase.ReportContract) {
+	us := userRoutes{t: t, r: r}
 
 	handler.POST("/append", us.append)
 	handler.GET("/get-balance/:id", us.getBalance)
@@ -234,10 +236,13 @@ func (u *userRoutes) getAllTransactions(c *gin.Context) {
 		errorResponse(c, http.StatusInternalServerError, "error in parsing date")
 		return
 	}
-	reports, err := u.t.GetAllTransactions(c.Request.Context(), date)
+	res, err := u.r.GenerateReportByPeriod(c.Request.Context(), date)
 	if err != nil {
-		errorResponse(c, http.StatusInternalServerError, "error in getting transactions list")
+		log.Println(err)
+		errorResponse(c, http.StatusInternalServerError, "cannot generate .csv report")
 		return
 	}
-	c.JSONP(http.StatusOK, allTransactionsListResponse{List: reports})
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename=report.csv")
+	c.Data(http.StatusOK, "text/csv", res.Bytes())
 }

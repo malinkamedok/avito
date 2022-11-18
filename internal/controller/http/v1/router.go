@@ -8,13 +8,14 @@ import (
 )
 
 func NewRouter(handler *gin.Engine,
-	u usecase.UserContract) {
+	u usecase.UserContract,
+	r usecase.ReportContract) {
 
 	h := handler.Group("/v1")
 
 	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	{
-		newUserRoutes(h, u)
+		newUserRoutes(h, u, r)
 	}
 }
