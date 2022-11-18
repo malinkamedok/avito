@@ -69,7 +69,7 @@ type unreserveRequest struct {
 // @Success     200 {object} nil
 // @Failure     400 {object} errResponse
 // @Failure     500 {object} errResponse
-// @Router      /v1/appendBalance [post]
+// @Router      /v1/append [post]
 func (u *userRoutes) append(c *gin.Context) {
 	var req appendRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -84,6 +84,15 @@ func (u *userRoutes) append(c *gin.Context) {
 	c.JSONP(http.StatusOK, nil)
 }
 
+// GetBalance godoc
+// @Summary get user balance
+// @Tags Gets
+// @Description get user balance
+// @Param       id  path 	 string  true "user id"
+// @Success     200 {object} uint64
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/get-balance/{id} [get]
 func (u *userRoutes) getBalance(c *gin.Context) {
 	userUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -102,6 +111,15 @@ type reserveResponse struct {
 	Reserves []int64 `json:"reserveList"`
 }
 
+// GetReserve godoc
+// @Summary get user reserve
+// @Tags Gets
+// @Description get user reserve
+// @Param       id  path 	 string  true "user id"
+// @Success     200 {object} uint64
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/get-reserve/{id} [get]
 func (u *userRoutes) getReserve(c *gin.Context) {
 	userUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -116,6 +134,15 @@ func (u *userRoutes) getReserve(c *gin.Context) {
 	c.JSONP(http.StatusOK, reserveResponse{reserve})
 }
 
+// ReserveMoney godoc
+// @Summary reserve user money
+// @Tags Posts
+// @Description create user reserve
+// @Param     request body reserveRequest true "query params"
+// @Success     200 {object} nil
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/reserve-money [post]
 func (u *userRoutes) reserveMoney(c *gin.Context) {
 	var request reserveRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -130,6 +157,15 @@ func (u *userRoutes) reserveMoney(c *gin.Context) {
 	c.JSONP(http.StatusOK, nil)
 }
 
+// AcceptIncome godoc
+// @Summary accept income
+// @Tags Posts
+// @Description the service was provided. accept income
+// @Param     request body acceptRequest true "query params"
+// @Success     200 {object} nil
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/accept-income [post]
 func (u *userRoutes) acceptIncome(c *gin.Context) {
 	var request acceptRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -144,6 +180,15 @@ func (u *userRoutes) acceptIncome(c *gin.Context) {
 	c.JSONP(http.StatusOK, nil)
 }
 
+// TransferMoney godoc
+// @Summary transfer money
+// @Tags Posts
+// @Description user to user money transfer
+// @Param     request body transferRequest true "query params"
+// @Success     200 {object} nil
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/transfer-money [post]
 func (u *userRoutes) transferMoney(c *gin.Context) {
 	var request transferRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -158,6 +203,15 @@ func (u *userRoutes) transferMoney(c *gin.Context) {
 	c.JSONP(http.StatusOK, nil)
 }
 
+// UnreserveMoney godoc
+// @Summary unreserve user money
+// @Tags Posts
+// @Description the service was not provided. return money to user balance
+// @Param     request body unreserveRequest true "query params"
+// @Success     200 {object} nil
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/unreserve-money [post]
 func (u *userRoutes) unreserveMoney(c *gin.Context) {
 	var request unreserveRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -176,6 +230,17 @@ type transactionListResponse struct {
 	List []entity.Transaction `json:"transactions"`
 }
 
+// GetTransactionsListByDate godoc
+// @Summary get transactions list by date
+// @Tags Gets
+// @Description get transactions list by date
+// @Param       id  path 	 string  true "user id"
+// @Param		limit path uint64 true "amount of rows"
+// @Param		offset path uint64 true "amount of skipped rows"
+// @Success     200 {object} transactionListResponse
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/get-transactions-by-date/{id}/{limit}/{offset} [get]
 func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
 	userUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -200,6 +265,17 @@ func (u *userRoutes) getTransactionListByDate(c *gin.Context) {
 	c.JSONP(http.StatusOK, transactionListResponse{List: transactions})
 }
 
+// GetTransactionsListBySum godoc
+// @Summary get transactions list by sum
+// @Tags Gets
+// @Description get transactions list by sum
+// @Param       id  path 	 string  true "user id"
+// @Param		limit path uint64 true "amount of rows"
+// @Param		offset path uint64 true "amount of skipped rows"
+// @Success     200 {object} transactionListResponse
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/get-transactions-by-sum/{id}/{limit}/{offset} [get]
 func (u *userRoutes) getTransactionListBySum(c *gin.Context) {
 	userUUID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -228,6 +304,15 @@ type allTransactionsListResponse struct {
 	List []entity.Report `json:"reports"`
 }
 
+// GetALLTransactions godoc
+// @Summary get all transactions list in one month
+// @Tags Gets
+// @Description get all transactions list in one month
+// @Param       date  path 	 string  true "YYYY-Mmm (example: 2022-Nov)"
+// @Success     200 {object} transactionListResponse
+// @Failure     400 {object} errResponse
+// @Failure     500 {object} errResponse
+// @Router      /v1/get-all-transactions/{date} [get]
 func (u *userRoutes) getAllTransactions(c *gin.Context) {
 	date, err := time.Parse("2006-Jan", c.Param("date"))
 	if err != nil {

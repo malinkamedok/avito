@@ -9,6 +9,43 @@
     "host": "localhost:9000",
     "basePath": "/",
     "paths": {
+        "/v1/accept-income": {
+            "post": {
+                "description": "the service was provided. accept income",
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "accept income",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.acceptRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/append": {
             "post": {
                 "description": "create or update user balance",
@@ -45,9 +82,355 @@
                     }
                 }
             }
+        },
+        "/v1/get-all-transactions/{date}": {
+            "get": {
+                "description": "get all transactions list in one month",
+                "tags": [
+                    "Gets"
+                ],
+                "summary": "get all transactions list in one month",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "YYYY-Mmm",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/get-balance/{id}": {
+            "get": {
+                "description": "get user balance",
+                "tags": [
+                    "Gets"
+                ],
+                "summary": "get user balance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/get-reserve/{id}": {
+            "get": {
+                "description": "get user reserve",
+                "tags": [
+                    "Gets"
+                ],
+                "summary": "get user reserve",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/get-transactions-by-date/{id}/{limit}/{offset}": {
+            "get": {
+                "description": "get transactions list by date",
+                "tags": [
+                    "Gets"
+                ],
+                "summary": "get transactions list by date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "amount of rows",
+                        "name": "limit",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "amount of skipped rows",
+                        "name": "offset",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/get-transactions-by-sum/{id}/{limit}/{offset}": {
+            "get": {
+                "description": "get transactions list by sum",
+                "tags": [
+                    "Gets"
+                ],
+                "summary": "get transactions list by sum",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "amount of rows",
+                        "name": "limit",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "amount of skipped rows",
+                        "name": "offset",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.transactionListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/reserve-money": {
+            "post": {
+                "description": "create user reserve",
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "reserve user money",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.reserveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/transfer-money": {
+            "post": {
+                "description": "user to user money transfer",
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "transfer money",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.transferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/unreserve-money": {
+            "post": {
+                "description": "the service was not provided. return money to user balance",
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "unreserve user money",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.unreserveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/avito_internal_controller_http_v1.errResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "avito_internal_controller_http_v1.acceptRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
+                    "type": "string"
+                }
+            }
+        },
         "avito_internal_controller_http_v1.appendRequest": {
             "type": "object",
             "properties": {
@@ -67,6 +450,96 @@
                 }
             }
         },
+        "avito_internal_controller_http_v1.reserveRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
+                    "type": "string"
+                }
+            }
+        },
+        "avito_internal_controller_http_v1.transactionListResponse": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Transaction"
+                    }
+                }
+            }
+        },
+        "avito_internal_controller_http_v1.transferRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "firstUserUUID": {
+                    "type": "string"
+                },
+                "secondUserUUID": {
+                    "type": "string"
+                }
+            }
+        },
+        "avito_internal_controller_http_v1.unreserveRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Transaction": {
+            "type": "object",
+            "properties": {
+                "money_amount": {
+                    "type": "integer"
+                },
+                "operation_date": {
+                    "type": "string"
+                },
+                "service_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.acceptRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_controller_http_v1.appendRequest": {
             "type": "object",
             "properties": {
@@ -82,6 +555,65 @@
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.reserveRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.transactionListResponse": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Transaction"
+                    }
+                }
+            }
+        },
+        "internal_controller_http_v1.transferRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "firstUserUUID": {
+                    "type": "string"
+                },
+                "secondUserUUID": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_controller_http_v1.unreserveRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "orderUUID": {
+                    "type": "string"
+                },
+                "serviceUUID": {
+                    "type": "string"
+                },
+                "userUUID": {
                     "type": "string"
                 }
             }

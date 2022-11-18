@@ -1,5 +1,16 @@
 basePath: /
 definitions:
+  avito_internal_controller_http_v1.acceptRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
+        type: string
+    type: object
   avito_internal_controller_http_v1.appendRequest:
     properties:
       sum:
@@ -10,6 +21,64 @@ definitions:
   avito_internal_controller_http_v1.errResponse:
     properties:
       error:
+        type: string
+    type: object
+  avito_internal_controller_http_v1.reserveRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
+        type: string
+    type: object
+  avito_internal_controller_http_v1.transactionListResponse:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/entity.Transaction'
+        type: array
+    type: object
+  avito_internal_controller_http_v1.transferRequest:
+    properties:
+      amount:
+        type: integer
+      firstUserUUID:
+        type: string
+      secondUserUUID:
+        type: string
+    type: object
+  avito_internal_controller_http_v1.unreserveRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
+        type: string
+    type: object
+  entity.Transaction:
+    properties:
+      money_amount:
+        type: integer
+      operation_date:
+        type: string
+      service_name:
+        type: string
+    type: object
+  internal_controller_http_v1.acceptRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
         type: string
     type: object
   internal_controller_http_v1.appendRequest:
@@ -24,6 +93,44 @@ definitions:
       error:
         type: string
     type: object
+  internal_controller_http_v1.reserveRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
+        type: string
+    type: object
+  internal_controller_http_v1.transactionListResponse:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/entity.Transaction'
+        type: array
+    type: object
+  internal_controller_http_v1.transferRequest:
+    properties:
+      amount:
+        type: integer
+      firstUserUUID:
+        type: string
+      secondUserUUID:
+        type: string
+    type: object
+  internal_controller_http_v1.unreserveRequest:
+    properties:
+      amount:
+        type: integer
+      orderUUID:
+        type: string
+      serviceUUID:
+        type: string
+      userUUID:
+        type: string
+    type: object
 host: localhost:9000
 info:
   contact: {}
@@ -31,6 +138,30 @@ info:
   title: Тестовое задание на позицию стажёра-бэкендера от Avito Tech
   version: "1.0"
 paths:
+  /v1/accept-income:
+    post:
+      description: the service was provided. accept income
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/avito_internal_controller_http_v1.acceptRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: accept income
+      tags:
+      - Posts
   /v1/append:
     post:
       description: create or update user balance
@@ -53,6 +184,223 @@ paths:
           schema:
             $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
       summary: append balance to user
+      tags:
+      - Posts
+  /v1/get-all-transactions/{date}:
+    get:
+      description: get all transactions list in one month
+      parameters:
+      - description: YYYY-Mmm
+        in: path
+        name: date
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: get all transactions list in one month
+      tags:
+      - Gets
+  /v1/get-balance/{id}:
+    get:
+      description: get user balance
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: get user balance
+      tags:
+      - Gets
+  /v1/get-reserve/{id}:
+    get:
+      description: get user reserve
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: get user reserve
+      tags:
+      - Gets
+  /v1/get-transactions-by-date/{id}/{limit}/{offset}:
+    get:
+      description: get transactions list by date
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: amount of rows
+        in: path
+        name: limit
+        required: true
+        type: integer
+      - description: amount of skipped rows
+        in: path
+        name: offset
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: get transactions list by date
+      tags:
+      - Gets
+  /v1/get-transactions-by-sum/{id}/{limit}/{offset}:
+    get:
+      description: get transactions list by sum
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: amount of rows
+        in: path
+        name: limit
+        required: true
+        type: integer
+      - description: amount of skipped rows
+        in: path
+        name: offset
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.transactionListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: get transactions list by sum
+      tags:
+      - Gets
+  /v1/reserve-money:
+    post:
+      description: create user reserve
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/avito_internal_controller_http_v1.reserveRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: reserve user money
+      tags:
+      - Posts
+  /v1/transfer-money:
+    post:
+      description: user to user money transfer
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/avito_internal_controller_http_v1.transferRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: transfer money
+      tags:
+      - Posts
+  /v1/unreserve-money:
+    post:
+      description: the service was not provided. return money to user balance
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/avito_internal_controller_http_v1.unreserveRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/avito_internal_controller_http_v1.errResponse'
+      summary: unreserve user money
       tags:
       - Posts
 swagger: "2.0"
