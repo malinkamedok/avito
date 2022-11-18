@@ -21,11 +21,12 @@ func Run(cfg *config.Config) {
 	}
 
 	us := usecase.NewUserUseCase(repo.NewUserRepo(pg))
-
+	rp := usecase.NewReportUseCase(us)
 	handler := gin.New()
 
 	v1.NewRouter(handler,
-		us)
+		us,
+		rp)
 
 	serv := httpserver.New(handler, httpserver.Port(cfg.AppPort))
 	interruption := make(chan os.Signal, 1)

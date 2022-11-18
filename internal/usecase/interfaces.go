@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"avito/internal/entity"
+	"bytes"
 	"context"
 	"github.com/google/uuid"
 	"time"
@@ -40,5 +41,9 @@ type (
 		GetTransactionListByDate(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 		GetTransactionListBySum(context.Context, uuid.UUID, uint64, uint64) ([]entity.Transaction, error)
 		GetAllTransactions(context.Context, time.Time) ([]entity.Report, error)
+	}
+
+	ReportContract interface {
+		GenerateReportByPeriod(context.Context, time.Time) (*bytes.Buffer, error)
 	}
 )
