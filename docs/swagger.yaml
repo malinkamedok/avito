@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:9000
+info:
+  contact: {}
+  description: Микросервис для работы с балансом пользователей
+  title: Тестовое задание на позицию стажёра-бэкендера от Avito Tech
+  version: "1.0"
+paths: {}
+swagger: "2.0"

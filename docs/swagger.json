@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Микросервис для работы с балансом пользователей",
+        "title": "Тестовое задание на позицию стажёра-бэкендера от Avito Tech",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:9000",
+    "basePath": "/",
+    "paths": {}
+}

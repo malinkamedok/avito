@@ -3,12 +3,16 @@ package v1
 import (
 	"avito/internal/usecase"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter(handler *gin.Engine,
 	u usecase.UserContract) {
 
 	h := handler.Group("/v1")
+
+	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	{
 		newUserRoutes(h, u)
